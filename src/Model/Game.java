@@ -63,13 +63,18 @@ public class Game {
     }
     
     public void playDealerRound(){
-        dealer.getCard(deck.drawCard());
-        dealer.getCard(deck.drawCard());
-        // selon règle general moin que 17 le dealer prend une carte
-        while(dealer.getPoints()<17){
+        //si le joueur a deja gagné ou perdu, on doit desactiver le bouton stop
+        if (!isOver()){
             dealer.getCard(deck.drawCard());
+            dealer.getCard(deck.drawCard());
+            while(dealer.getPoints() < 21 && player.getPoints() < 21 &&
+                    player.getPoints() > dealer.getPoints()){
+                
+                dealer.getCard(deck.drawCard());
+            }
+            finished = true;
+            checkWinner();
         }
-        checkWinner();
     }
     
     
@@ -77,10 +82,14 @@ public class Game {
         if(player.getPoints()==21){
             winnerName=player.getName();
             finished= true;
+            player.changeGains(player.getBet());
+            player.increment_Number_of_Hands();
             fire();
         }else if(player.getPoints()>21){
             winnerName=dealer.getName();
             finished= true;
+            player.increment_Number_of_Hands();
+            player.changeGains(player.getBet()*-1);
             fire();
         }
     }
@@ -93,13 +102,14 @@ public class Game {
             
             winnerName = player.getName();
             finished = true;
-            player.changeGains(player.getBet()); 
+            player.changeGains(player.getBet());
             player.increment_Number_of_Hands();
             fire();
         } else {
             winnerName = dealer.getName();
             finished = true;
-            player.changeGains(player.getBet()*-1); 
+            player.increment_Number_of_Hands();
+            player.changeGains(player.getBet()*-1);
             fire();
         }
         System.out.println("player gains : " + player.getGains());
@@ -136,10 +146,10 @@ public class Game {
     
     
     private void fire() {
-        for (InterfaceView vue : views_list){
+        views_list.stream().forEach((vue) -> {
             vue.notifieChangement();
             //System.out.println("notified");
-        }
+        });
     }
     
     public boolean isOver(){

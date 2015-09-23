@@ -27,9 +27,10 @@ public class PlayerView extends AbstractView{
     Scene scene;
     Label label_playerName;
     Label label_gameState;
-    Label label_scorePlayer;
-    Label label_scoreDealer;
+    Label label_scorePlayer,label_scoreDealer;
     Label label_gainsPlayer;
+    Label label_games_won;
+    Label label_nbHands_played;
     
     VBox Vbox_for_boxes;
     HBox HBOX_labels;
@@ -60,6 +61,7 @@ public class PlayerView extends AbstractView{
         label_gameState = new Label("Manche en cours");
         label_playerName = new Label(game_model.getPlayer().getName());
         label_gainsPlayer = new Label("Gains : " +game_model.getPlayer().getGains());
+        label_nbHands_played = new Label("Manches : "+ game_model.getPlayer().getNumber_of_Hands());
         
         HBOX_labels.setSpacing(50);
         HBOX_PlayerImages.setSpacing(5);
@@ -68,7 +70,7 @@ public class PlayerView extends AbstractView{
         
         setLabelText_size_color(new Font("Arial",20), Color.WHITE);
         
-        Vbox_for_boxes.getChildren().addAll(label_gainsPlayer,HBOX_labels,HBOX_PlayerImages,HBOX_DealerImages);
+        Vbox_for_boxes.getChildren().addAll(label_gainsPlayer,label_nbHands_played,HBOX_labels,HBOX_PlayerImages,HBOX_DealerImages);
         HBOX_labels.getChildren().addAll(label_playerName,label_scorePlayer,label_scoreDealer,label_gameState);
         
         
@@ -96,14 +98,14 @@ public class PlayerView extends AbstractView{
         if (allSetup){
             System.out.println("Winner : " + game_model.getWinnerName());
             if (game_model.isOver()){
-                if (game_model.getWinnerName().equals("Dealer")){
+                if (game_model.getWinnerName().equals(game_model.getDealer().getName())){
                     label_gameState.setText("Vous Avez Perdu");
-                    label_gainsPlayer.setText("Gains : "+game_model.getPlayer().getGains());
                 }  else{
                     label_gameState.setText("Vous Avez Gagné !! ");
                 }
-            }
-            else {
+                label_gainsPlayer.setText("Gains : "+game_model.getPlayer().getGains());
+                label_nbHands_played.setText("Manches : " + game_model.getPlayer().getNumber_of_Hands());
+            }else {
                 label_gameState.setText("Manche en cours");
             }
             addCardImage();
@@ -138,7 +140,7 @@ public class PlayerView extends AbstractView{
     }
     private void addCardsFromPlayer(List<Card> playersCards, String playerName){
         for (Card c : playersCards ){
-            imageName += c.getSuit().toString()+"/"+c.getRank().toString()+".png";
+            imageName += c.getSuit()+"/"+c.getRank()+".png";
             if(playerName.equals(game_model.getPlayer().getName()))
                 HBOX_PlayerImages.getChildren().add(new ImageView(imageName));
             
@@ -155,12 +157,14 @@ public class PlayerView extends AbstractView{
         label_scoreDealer.setFont(f);
         label_gameState.setFont(f);
         label_gainsPlayer.setFont(f);
+        label_nbHands_played.setFont(f);
         
         label_playerName.setTextFill(c);
         label_scorePlayer.setTextFill(c);
         label_scoreDealer.setTextFill(c);
         label_gameState.setTextFill(c);
         label_gainsPlayer.setTextFill(c);
+        label_nbHands_played.setTextFill(c);
         
     }
 }

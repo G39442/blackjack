@@ -7,6 +7,7 @@ package Controller;
 
 import Model.*;
 import View.Joueur.*;
+import View.Outils.AbstractView;
 import java.net.*;
 import java.util.*;
 import javafx.event.*;
@@ -19,14 +20,14 @@ import javafx.scene.control.*;
  *
  * @author tanjim
  */
-public class ControllerFXMLController implements Initializable {
+public class ControllerFXMLController extends AbstractView implements Initializable {
     
     private Game model;
     /**
      * Initializes the controller class.
      */
     @FXML
-    private Slider spinner;
+    private Slider slider;
     
     @FXML
     private Button button_stop;
@@ -50,9 +51,8 @@ public class ControllerFXMLController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        System.out.println("spinner value "+spinner.valueProperty());
-        this.model = new Game(new Deck(),new Player(playerName_textField.getText(),((int)spinner.getValue())));
-        System.out.println(model.getPlayer().getBet());
+        System.out.println("spinner value "+slider.valueProperty());
+        
     }
     public void openPlayerView(){
         //new PlayerView(this.model);
@@ -61,6 +61,11 @@ public class ControllerFXMLController implements Initializable {
     
     @FXML
     private void handleStartButtonAction() {
+        if (this.model == null){
+            this.model = new Game(new Deck(),new Player(playerName_textField.getText(),((int)slider.getValue())));
+        }
+        model.addListener(this);
+        slider.setDisable(true);
         if (playerName_textField.getText().equals("")){
             Alert alert = new Alert(AlertType.WARNING);
             alert.setTitle("Warning Dialog");
@@ -70,23 +75,27 @@ public class ControllerFXMLController implements Initializable {
         }else{
             button_start.setDisable(true);
             setDisableButtons(false);
-            //System.out.println(model);
             PlayerView playerView = new PlayerView(model);
         }
     }
     
+    
     @FXML
     private void handle_CardButton_Action(ActionEvent event) {
+        System.out.println(slider.getValue());
         model.play();
     }
+    
     @FXML
     private void stop_button() {
+        button_nouv_manche.setDisable(false);
         button_stop.setDisable(true);
         model.stopRound();
     }
     
     @FXML
     private void handle_Nouv_Manche(){
+        button_nouv_manche.setDisable(true);
         button_stop.setDisable(false);
         model.newHand();
     }
@@ -96,5 +105,20 @@ public class ControllerFXMLController implements Initializable {
         button_card.setDisable(bool);
         button_nouv_manche.setDisable(bool);
         button_stop.setDisable(bool);
+    }
+    
+    @Override
+    public void notifieChangement() {
+        if (model != null){
+            if(model.isOver()){
+                button_stop.setDisable(true);
+                button_card.setDisable(true);
+                button_nouv_manche.setDisable(false);
+            }else{
+                button_stop.setDisable(false);
+                button_card.setDisable(false);
+                button_nouv_manche.setDisable(true);
+            }
+        }
     }
 }
