@@ -5,15 +5,21 @@
 */
 package Controller;
 
-import Model.*;
-import View.Joueur.*;
-import View.Outils.AbstractView;
+import Model.Data.*;
+import Model.Engine.*;
+import Views.Outils.*;
+import Views.*;
+import Views.withSceneBuilder.*;
+import java.io.*;
 import java.net.*;
 import java.util.*;
 import javafx.event.*;
 import javafx.fxml.*;
+import javafx.scene.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
 
 /**
  * FXML Controller class
@@ -23,6 +29,7 @@ import javafx.scene.control.*;
 public class ControllerFXMLController extends AbstractView implements Initializable {
     
     private Game model;
+    Alert alert;
     /**
      * Initializes the controller class.
      */
@@ -47,57 +54,123 @@ public class ControllerFXMLController extends AbstractView implements Initializa
     @FXML
     private TextField playerName_textField;
     
+    @FXML
+    private MenuItem viewDealer;
     
+    @FXML
+    private MenuItem viewPlayer;
+    
+    @FXML
+    private MenuItem viewSummary;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        System.out.println("spinner value "+slider.valueProperty());
+        alert = new Alert(AlertType.WARNING);
+        alert.setTitle("Warning Dialog");
+        viewPlayer.setDisable(true);
+        viewDealer.setDisable(true);
+        viewSummary.setDisable(true);
+    }
+    
+    @FXML
+    public void openPlayerView(){
+        handleStartButtonAction();
+    }
+    
+    @FXML
+    public void history(){
+        
+        new FindPLayer();
+    }
+    @FXML
+    public void stop_game(){
+        System.out.println("stop gama ca marche");
+        this.model.addPlayerToDatabase();
         
     }
-    public void openPlayerView(){
-        //new PlayerView(this.model);
-        handleStartButtonAction();
+    
+    @FXML
+    public void openSummaryView(ActionEvent event) throws IOException{
+        
+        FXMLLoader myLoader = new FXMLLoader(getClass().getResource("/Views/withSceneBuilder/SummaryViewFXML.fxml"));
+        
+        Stage stage = new Stage();
+        Scene scene = new Scene ((Pane)myLoader.load());
+        
+        stage.setScene(scene);
+       
+        SummaryViewFXMLController con  = myLoader.<SummaryViewFXMLController>getController();
+        
+        con.setGameModel(model);
+        
+        stage.show();
+    }
+    
+    @FXML
+    public void openDealerView(){
+        if (this.model == null){
+            try {
+                this.model = new Game(new Deck(),new Human(playerName_textField.getText(),((int)slider.getValue())));
+            } catch (BlackJackException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+        DealerView dealerView = new DealerView(model);
     }
     
     @FXML
     private void handleStartButtonAction() {
         if (this.model == null){
-            this.model = new Game(new Deck(),new Player(playerName_textField.getText(),((int)slider.getValue())));
-        }
-        model.addListener(this);
-        slider.setDisable(true);
-        if (playerName_textField.getText().equals("")){
-            Alert alert = new Alert(AlertType.WARNING);
-            alert.setTitle("Warning Dialog");
-            alert.setHeaderText("You DO have a Name... Don't YOU ? !!! ");
-            alert.setContentText("ENTER YOUR NAME!");
-            alert.showAndWait();
-        }else{
+           try {
+                this.model = new Game(new Deck(),new Human(playerName_textField.getText(),((int)slider.getValue())));
+           } catch (BlackJackException ex) {
+                alert.setContentText(ex.getMessage());
+                alert.showAndWait();
+            }
+            model.addListener(this);
+            slider.setDisable(true);
             button_start.setDisable(true);
             setDisableButtons(false);
             PlayerView playerView = new PlayerView(model);
+            
+        }
+    }
+    
+    @FXML
+    private void handle_CardButton_Action(ActionEvent event) {
+        try {
+            model.hit_me();
+        } catch (BlackJackException ex) {
+            alert.setContentText(ex.getMessage());
+            alert.showAndWait();
         }
     }
     
     
     @FXML
-    private void handle_CardButton_Action(ActionEvent event) {
-        System.out.println(slider.getValue());
-        model.play();
-    }
-    
-    @FXML
     private void stop_button() {
-        button_nouv_manche.setDisable(false);
-        button_stop.setDisable(true);
-        model.stopRound();
+        try {
+            button_nouv_manche.setDisable(false);
+            button_stop.setDisable(true);
+            model.stopRound();
+            openDealerView();
+        } catch (BlackJackException ex) {
+            alert.setContentText(ex.getMessage());
+            alert.showAndWait();
+        }
     }
     
     @FXML
     private void handle_Nouv_Manche(){
-        button_nouv_manche.setDisable(true);
-        button_stop.setDisable(false);
-        model.newHand();
+        try {
+            model.newHand();
+            button_nouv_manche.setDisable(true);
+            button_stop.setDisable(false);
+        } catch (BlackJackException ex) {
+            alert.setContentText(ex.getMessage());
+            alert.showAndWait();
+        }
+        
     }
     
     private void setDisableButtons(boolean bool){
@@ -105,6 +178,9 @@ public class ControllerFXMLController extends AbstractView implements Initializa
         button_card.setDisable(bool);
         button_nouv_manche.setDisable(bool);
         button_stop.setDisable(bool);
+        viewDealer.setDisable(bool);
+        viewPlayer.setDisable(bool);
+        viewSummary.setDisable(bool);
     }
     
     @Override

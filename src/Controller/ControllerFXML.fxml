@@ -12,13 +12,16 @@
         <menus>
           <Menu mnemonicParsing="false" text="Vues">
             <items>
-              <MenuItem fx:id="viewDealer" mnemonicParsing="false" onAction="#openPlayerView" text="Joueur" />
-                  <MenuItem mnemonicParsing="false" text="Dealer" />
+                  <MenuItem fx:id="viewPlayer" mnemonicParsing="false" onAction="#openPlayerView" text="Joueur" />
+                  <MenuItem fx:id="viewDealer" mnemonicParsing="false" onAction="#openDealerView" text="Dealer" />
+                  <MenuItem fx:id="viewSummary" mnemonicParsing="false" onAction="#openSummaryView" text="Synthèse" />
+                  
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Parametres Persistés">
             <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
+          
+              <MenuItem fx:id="history" mnemonicParsing="false" onAction="#history" text="history"/>
             </items>
           </Menu>
         </menus>
@@ -36,6 +39,6 @@
       <Button fx:id="button_card" disable="true" layoutX="88.0" layoutY="292.0" mnemonicParsing="false" onAction="#handle_CardButton_Action" prefHeight="25.0" prefWidth="58.0" text="Carte" />
       <Button fx:id="button_stop" disable="true" layoutX="152.0" layoutY="292.0" mnemonicParsing="false" onAction="#stop_button" prefHeight="25.0" prefWidth="58.0" text="Stop" />
       <Button fx:id="button_nouv_manche" disable="true" layoutX="225.0" layoutY="292.0" mnemonicParsing="false" onAction="#handle_Nouv_Manche" text="Nouvelle Manche" />
-      <Button fx:id="button_arreter_jeu" disable="true" layoutX="350.0" layoutY="292.0" mnemonicParsing="false" text="Arreter Jeu" />
+      <Button fx:id="button_arreter_jeu" disable="true" layoutX="350.0" layoutY="292.0" mnemonicParsing="false" text="Arreter Jeu" onAction="#stop_game"  />
    </children>
 </AnchorPane>

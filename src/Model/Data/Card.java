@@ -3,7 +3,7 @@
 * To change this template file, choose Tools | Templates
 * and open the template in the editor.
 */
-package Model;
+package Model.Data;
 
 import Model.Enums.Ranks;
 import Model.Enums.Suits;
@@ -16,11 +16,13 @@ public class Card {
     private final Suits suit;
     private final Ranks rank;
     private final int value;
+    private boolean hidden;
     
     public Card(Ranks rank,Suits suit){
         this.rank = rank;
         this.suit = suit;
         this.value = rank.value;
+        this.hidden = false;
     }
     
     public Suits getSuit() {
@@ -33,6 +35,14 @@ public class Card {
     
     public int getValue() {
         return value;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
     
     @Override

@@ -3,7 +3,7 @@
 * To change this template file, choose Tools | Templates
 * and open the template in the editor.
 */
-package Model;
+package Model.Data;
 
 import Model.Enums.Ranks;
 import Model.Enums.Suits;
@@ -21,8 +21,9 @@ public class Deck {
     
     
     public Deck() {
-        this.theDeck = fillDeck();
+        this.theDeck = new ArrayList<>();
         this.dealtCards = new ArrayList<>();
+        refill();
     }
     
     public Deck(ArrayList<Card> theDeck) {
@@ -31,21 +32,18 @@ public class Deck {
     
     public Card drawCard(){
         int i = (int) (Math.random() * theDeck.size()-1);
-        //System.out.println("i = " + i);
         dealtCards.add(theDeck.get(i));
         theDeck.remove(i);
         
         return dealtCards.get(dealtCards.size()-1);
     }
     
-    public static ArrayList<Card> fillDeck(){
-        ArrayList <Card> tempDeck = new ArrayList<>();
+    public void refill(){
         for(Suits suit : Suits.values()){
             for(Ranks rank : Ranks.values())
-                tempDeck.add(new Card(rank, suit));
+                this.theDeck.add(new Card(rank, suit));
         }
-        Collections.shuffle(tempDeck);
-        return tempDeck;
+        Collections.shuffle(theDeck);
     }
     
     public boolean isEmpty(){

@@ -5,6 +5,8 @@
 */
 package Model;
 
+import Model.Data.Deck;
+
 /**
  *
  * @author tanjim
@@ -25,7 +27,7 @@ public class testModel {
             System.out.println("card drawn = " + mySet.drawCard());
         
         System.out.println(mySet);
-        mySet.setTheDeck(Deck.fillDeck());
+        mySet.refill();
         System.out.println(mySet.getDealtCards().size());
     }
     

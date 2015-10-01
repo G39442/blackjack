@@ -11,12 +11,11 @@
 
 package Controller;
 
-import javafx.application.Application;
+import javafx.application.*;
 import static javafx.application.Application.launch;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import javafx.fxml.*;
+import javafx.scene.*;
+import javafx.stage.*;
 
 /**
  *
@@ -27,9 +26,14 @@ public class Controller extends Application {
    @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("ControllerFXML.fxml"));
-        
+        root.setStyle("-fx-background-color : black");
+      
+        root.getStylesheets().add("style/BlackJackCSS.css");
         Scene scene = new Scene(root);
-        
+      
+      //  scene.set
+       // f.getStylesheets().add("style/BlackJackCSS.css");
+       // scene.getStylesheets().add("style/BlackJackCSS.css");
         stage.setScene(scene);
         stage.show();
     }

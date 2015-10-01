@@ -1,4 +1,4 @@
-package View.Outils;
+package Views.Outils;
 
 /**
  *
